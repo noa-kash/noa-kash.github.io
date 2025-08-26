@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Systems & IoT Portfolio</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles to augment Tailwind */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a192f; /* Dark Navy Background */
+            color: #cbd5e1; /* slate-300 for body text */
+        }
+        /* Welcome Screen Animation */
+        #welcome-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #0a192f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s ease-out;
+        }
+        #welcome-screen h1 {
+            font-size: 4rem;
+            font-weight: 700;
+        }
+        /* Project Modal Transitions */
+        .modal {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal.hidden .modal-content {
+            transform: scale(0.95);
+        }
+        /* Custom scrollbar for modal content */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #112240;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+            border: 2px solid #112240;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="fixed inset-0 bg-[#0a192f] flex items-center justify-center z-50">
+        <h1 class="text-4xl md:text-5xl font-bold text-[#64ffda] animate-pulse">Welcome</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 opacity-0 transition-opacity duration-700">
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-100">Embedded Systems & IoT Portfolio</h1>
+            <p class="mt-4 text-lg text-slate-400">A collection of projects showcasing firmware, hardware, and software development skills.</p>
+        </header>
+
+        <!-- Filter Bar -->
+        <nav id="filters" class="flex flex-wrap justify-center gap-2 mb-12"></nav>
+
+        <!-- Projects Grid -->
+        <main id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
+
+        <!-- Team Section -->
+        <section id="team" class="my-20">
+            <h2 class="text-3xl font-bold text-center text-slate-100 mb-8">Meet the Team</h2>
+            <!-- Updated to a flexbox container with a fixed width on each card -->
+            <div id="team-grid" class="max-w-4xl mx-auto flex flex-wrap justify-center gap-8">
+                <!-- Team cards will be dynamically generated here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div id="modal-content-container" class="modal-content rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#112240] border border-[#233554]">
+            <!-- Modal content will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Project Data ---
+            const projects = [
+                {
+                    id: 'portable-mini-hydro',
+                    title: 'Portable Mini Hydro Turbine',
+                    overview: 'Designed and implemented a floatable mini hydro turbine, focusing on PCB design with KiCad and 3D enclosure design with Fusion 360.',
+                    challenge: 'To create a compact and efficient power generation solution, requiring detailed electronic circuit design and precise mechanical integration within a small form factor.',
+                    solution: {
+                        hardware: ['TPS63070 (Power Management IC)', 'Custom PCB', 'Mini Turbine Generator', 'Floatation Mechanism'],
+                        software: []
+                    },
+                    features: ['Compact & Floatable Design', 'Custom PCB for Power Management (TPS63070)', 'Integrated 3D Enclosure Design', 'Efficient Hydro Power Generation'],
+                    techHighlights: ['PCB Design: KiCad (Footprint to Schematic)', '3D Design: Fusion 360', 'Power Management: TPS63070', 'Hardware Prototyping'],
+                    impact: 'Successfully demonstrated a viable approach to small-scale, portable hydro power, showcasing strong skills in both electrical and mechanical design for embedded applications.',
+                    tags: ['PCB Design', '3D Design', 'Hardware', 'Power Management'],
+                    media: {
+                        images: ['hydro_tubine_1.png','hydro_turbine_2.png','hydro_tubine_3.png','hydro_tubine_4.png','hydro_tubine_5.png','hydro_tubine_6.png','hydro_tubine_7.png'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'industrial-motor-fault',
+                    title: 'AI-Based Industrial Motor Fault Prediction System in Realtime',
+                    overview: 'Developed a real-time AI-driven system for predicting industrial motor faults using C++, C, Python, and an Arduino Nano.',
+                    challenge: 'To build a robust system capable of real-time data acquisition, processing, and AI inference for early fault detection in industrial motors, minimizing downtime.',
+                    solution: {
+                        hardware: ['Arduino Nano', 'Sensors (Vibration, Temperature, Current)', 'Industrial Motor (for testing)'],
+                        software: [
+                            { title: 'Embedded Firmware (C/C++)', details: 'Optimized for real-time data acquisition from sensors.' },
+                            { title: 'AI Model Development (Python)', details: 'Developed and trained machine learning models (Future temperature prediction, classification (Over load, Normal load, Broken Belt)) using Python for motor fault prediction.' },
+                            { title: 'Data Preprocessing & Inference', details: 'Implemented efficient algorithms for on-device data preprocessing and AI model inference to meet real-time requirements.' }
+                        ]
+                    },
+                    features: ['Real-time Fault Prediction', 'AI/Machine Learning Integration', 'Microcontroller-Based Solution', 'Early Anomaly Detection', 'Optimized for Industrial Use', 'Low-Cost Implementation'],
+                    techHighlights: ['Languages: C++, C, Python', 'AI/ML: Machine Learning, Anomaly Detection', 'Microcontroller: Arduino Nano', 'Real-time Systems', 'Sensor Integration'],
+                    impact: 'Created a practical and cost-effective solution for predictive maintenance in industrial settings, significantly reducing potential equipment failures and operational costs.',
+                    tags: ['AI', 'C++', 'Python', 'Arduino', 'Real-time'],
+                    media: {
+                        images: ['motor_fault_1.png','motor_fault_2.png'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'health-monitoring-ai',
+                    title: 'Health Monitoring Device with AI',
+                    overview: 'Developed a portable health monitoring device that collects physiological data from various sensors, sends it to the cloud, and uses machine learning models to predict abnormalities in real-time.',
+                    challenge: 'To design a compact, accurate, and reliable device for continuous health monitoring, ensuring precise sensor data acquisition, efficient cloud communication, and effective AI-driven anomaly detection for early health alerts.',
+                    solution: {
+                        hardware: ['Microcontroller (ESP32, Arduino Nano)', 'Body Temperature Sensor', 'Moisture Sensor', 'Blood Oxygen Saturation Sensor (SpO2)', 'Heart Rate Sensor'],
+                        software: [
+                            { title: 'Embedded Firmware (C/C++)', details: 'Manages sensor interfacing, data acquisition, and local preprocessing. Optimizes power consumption for continuous operation.' },
+                            { title: 'Cloud Integration', details: 'Securely transmits sensor data to a cloud platform (e.g., Firebase, AWS IoT) for storage and further processing.' },
+                            { title: 'Machine Learning Models (Cloud/Edge)', details: 'Utilizes trained AI models to analyze incoming sensor data, identify patterns, and predict abnormalities or normalities in physiological parameters.' },
+                            { title: 'Alerting System', details: 'Triggers real-time alerts or notifications upon detection of significant anomalies, potentially via a mobile app or dashboard.' }
+                        ]
+                    },
+                    features: ['Multi-Sensor Data Collection', 'Real-time Health Monitoring', 'Cloud Data Transmission', 'AI-Driven Anomaly Detection', 'Predictive Health Insights', 'Wearable/Portable Design'],
+                    techHighlights: ['Microcontroller: ESP32/Arduino', 'Sensors: Temperature, Moisture, SpO2, Heart Rate', 'Cloud Platform: Firebase/AWS IoT', 'AI/ML: Anomaly Detection, Classification', 'Communication: Wi-Fi/BLE', 'Real-time Data Processing'],
+                    tags: ['AI', 'Health', 'IoT', 'Wearable', 'Cloud'],
+                    media: {
+                        images: ['medicAI.jpeg','medicAI2.jpeg'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'neopixel-artwork',
+                    title: 'Neopixel LED Artwork Control System',
+                    overview: 'A sophisticated control system for an interactive art installation utilizing Neopixel LEDs, controlled by a custom web server on an ESP32.',
+                    challenge: 'To create a flexible and intuitive method for users to control complex Neopixel LED animations in real-time without direct programming knowledge.',
+                    solution: {
+                        hardware: ['ESP32 Microcontroller', 'Neopixel LEDs (WS2812B)'],
+                        software: [
+                            { title: 'ESP32 Web Server', details: 'A lightweight web interface (HTML/CSS/JS) served by the ESP32, providing controls for animation type, color, brightness, and speed.' },
+                            { title: 'Neopixel LED Control Logic', details: 'Firmware integrates with the Adafruit NeoPixel library to manage various pre-programmed animation patterns.' }
+                        ]
+                    },
+                    features: ['Dynamic Animation Selection', 'Full Color Control', 'Adjustable Brightness & Speed', 'Web-Based Interface', 'Real-time Feedback', 'Scalable Architecture'],
+                    techHighlights: ['Microcontroller: ESP32', 'Programming Language: C++ (Arduino)', 'Web Technologies: HTML, CSS, JS', 'Communication: HTTP', 'Libraries: Adafruit NeoPixel'],
+                    impact: 'Successfully delivered a robust and user-friendly control system that enhances the interactivity of LED art, making advanced control accessible to a broader audience.',
+                    tags: ['ESP32', 'Firmware', 'Web Server', 'IoT'],
+                    media: {
+                        images: ['./NeoArt.png'],
+                        videos: ['./NeoartV.mp4']
+                    }
+                },
+                {
+                    id: 'paragliding-tracker',
+                    title: 'Paragliding Jump Detection System',
+                    overview: 'An embedded system and mobile app to detect paragliding jumps, assess user performance via questions, and transmit data to a cloud database for leaderboards.',
+                    challenge: 'To develop a reliable, low-power system with 1-3 ms responsiveness for accurate jump detection, data integrity, and seamless data transmission.',
+                    solution: {
+                        hardware: ['ESP32S3 Microcontroller', 'TFT Display', 'Accelerometers/Gyroscopes (Implicit)', 'Rechargeable Battery'],
+                        software: [
+                            { title: 'Firmware (ESP32S3)', details: 'Includes a jump detection algorithm, interactive questioning module, aggressive sleep mechanisms, and responsiveness optimization.' },
+                            { title: 'Mobile Application', details: 'Receives data from the device, syncs to a cloud database (e.g., Firestore), and displays personal stats and a global leaderboard.' }
+                        ]
+                    },
+                    features: ['Accurate Jump Detection', 'Interactive Performance Assessment', 'Ultra-Low Power Consumption', 'Exceptional Responsiveness (1-3ms)', 'Secure Data Handling', 'Seamless Smartphone Integration'],
+                    techHighlights: ['Microcontroller: ESP32S3', 'Firmware Language: C++', 'Communication: BLE / Wi-Fi', 'Mobile Dev: React Native/Flutter/Native', 'Database: Cloud-based (Firestore)', 'Security: Double Authentication'],
+                    impact: 'Delivered an innovative system that provides paragliders a unique tool to measure cognitive response while fostering a competitive community.',
+                    tags: ['ESP32S3', 'Firmware', 'BLE', 'IoT', 'Mobile App', 'Low Power'],
+                    media: {
+                        images: ['./PS1.png', './PS2.png', './PS3.png', './PS4.png', './PS5.png', './PS6.png'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'iracing-telemetry',
+                    title: 'iRacing Telemetry Display',
+                    overview: 'An external TFT display that shows real-time vehicle and track telemetry from the iRacing simulation, helping players make informed in-game decisions.',
+                    challenge: 'To create a dedicated, non-distracting display solution that efficiently extracts and presents critical telemetry data for strategic advantage.',
+                    solution: {
+                        hardware: ['Microcontroller (ESP32/Arduino/STM32)', 'TFT Display'],
+                        software: [
+                            { title: 'Python Application (PC)', details: 'Interfaces with iRacing\'s telemetry SDK/API to extract data (laps, tires, fuel) and sends it over a serial port.' },
+                            { title: 'Firmware (Microcontroller)', details: 'Receives serial data and renders it on a custom, beautifully designed UI on the TFT display in real-time.' }
+                        ]
+                    },
+                    features: ['Real-time Telemetry Display', 'Comprehensive Data Points', 'Intuitive Visuals', 'Strategic Decision Support', 'Seamless Game Integration', 'Dedicated External Display'],
+                    techHighlights: ['PC Language: Python', 'Embedded System: Microcontroller', 'Display: TFT', 'Communication: UART', 'Game Integration: iRacing SDK/API', 'UI Design: Custom Embedded GUI'],
+                    impact: 'Successfully created a visually engaging telemetry display that enhances player situational awareness and strategic capability in a competitive simulation.',
+                    tags: ['Python', 'Firmware', 'UI/UX', 'Gaming'],
+                    media: {
+                        images: ['./IRacing_1.png', './IRacing_2.png'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'smart-dispenser',
+                    title: 'Smart Dispenser with Mobile App Control',
+                    overview: 'A smart liquid dispenser with bottle detection, audio/visual feedback, and multiple intelligent modes controlled via a BLE mobile application.',
+                    challenge: 'To engineer a system with accurate bottle detection, precise liquid dispensing (especially for cocktails), robust motion control with position memory, and a flexible BLE interface.',
+                    solution: {
+                        hardware: ['Microcontroller (ESP32/STM32)', 'IR Sensors', 'WS2812 LED Ring', 'Speakers', 'Stepper Motor', 'Pumps/Valves'],
+                        software: [
+                            { title: 'Firmware (Microcontroller)', details: 'Manages sensor integration, precise stepper motor control with non-volatile position memory, audio/visual feedback, and multiple dispensing modes.' },
+                            { title: 'Mobile Application', details: 'Provides a user-friendly BLE interface to select modes (Random, Constant, Cocktail) and configure parameters.' }
+                        ]
+                    },
+                    features: ['Automated Bottle Detection', 'Multi-Mode Operation', 'Precise Stepper Motor Control with Position Memory', 'Rich User Feedback', 'BLE Mobile App Control', 'Consistent Cocktail Mixing'],
+                    techHighlights: ['Microcontroller: ESP32/STM32', 'Sensors: IR', 'Actuators: Stepper Motor, WS2812', 'Communication: BLE', 'Firmware Language: C++', 'Motion Control: Non-volatile position memory'],
+                    impact: 'Delivered a highly functional and versatile smart dispenser, showcasing strong capabilities in embedded design, sensor integration, motor control, and mobile IoT.',
+                    tags: ['ESP32', 'Firmware', 'BLE', 'IoT', 'PCB Design'],
+                    media: {
+                        images: [],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'rhythm-game',
+                    title: 'Interactive Multi-Player Rhythm Game',
+                    overview: 'An engaging rhythm game for up to four players who add beats to a music track in real-time, guided by individual LED light arrays.',
+                    challenge: 'To develop a cost-effective, commercial-grade system that could handle simultaneous multi-player processing, precise timing, and music playback on resource-constrained hardware.',
+                    solution: {
+                        hardware: ['Microcontroller (ESP32/STM32/Teensy)', 'LED Light Arrays', 'Push Buttons', 'Audio Output Module'],
+                        software: [
+                            { title: 'Firmware (Microcontroller)', details: 'Built on a non-blocking architecture using state machines and interrupts to handle music, lighting, and inputs for four players concurrently without lag.' }
+                        ]
+                    },
+                    features: ['Interactive Rhythm Gameplay', 'Multi-Player Support (up to 4)', 'Visual Timing Cues', 'Precision Timing', 'Real-time Feedback', 'Non-Blocking Architecture'],
+                    techHighlights: ['Microcontroller: ESP32/STM32/Teensy', 'Input/Output: Push Buttons, Addressable LEDs', 'Audio: Integrated Playback', 'Firmware Language: C++', 'Software Design: Non-blocking, State Machines'],
+                    impact: 'Successfully delivered a robust multi-player game, demonstrating expertise in developing complex, real-time interactive experiences on optimized, cost-effective hardware.',
+                    tags: ['Firmware', 'Gaming', 'Real-time'],
+                    media: {
+                        images: ['./Multiplayergame.png'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'bus-seat-indicator',
+                    title: 'Bus Seat Occupancy & Buckle Status Indicator',
+                    overview: 'A comprehensive seat monitoring system for buses using RP2040-based transmitters, RS485 communication, and an ESP32S3-TFT display for real-time status and safety alerts.',
+                    challenge: 'To design a scalable and reliable system for distributed data collection in a noisy environment, with a dynamic UI and safety-critical auditory alerts.',
+                    solution: {
+                        hardware: ['RP2040 (Transmitters)', 'ESP32S3 (Receiver/Display)', 'RS485 Transceivers', 'Buzzers', 'TFT Display'],
+                        software: [
+                            { title: 'Transmitter Firmware (RP2040)', details: 'Monitors seat/buckle status and transmits data over RS485.' },
+                            { title: 'Receiver/Display Firmware (ESP32S3)', details: 'Aggregates data from all transmitters, converts for display, and uses LVGL to render a dynamic UI that adapts to bus size (4 vs 7-seater).' }
+                        ]
+                    },
+                    features: ['Real-time Seat Monitoring', 'Robust RS485 Communication', 'Auditory Safety Alerts', 'Dynamic UI (LVGL)', 'Comprehensive Visual Feedback', 'Custom PCB Design'],
+                    techHighlights: ['Microcontrollers: RP2040, ESP32S3', 'Communication: RS485, UART', 'Graphics Library: LVGL', 'Firmware Language: C++', 'PCB Design: Custom transmitter/receiver boards'],
+                    impact: 'Delivered a safety-enhancing system for public transport, showcasing skills in multi-microcontroller systems, robust protocols, and advanced embedded graphics.',
+                    tags: ['RP2040', 'ESP32S3', 'Firmware', 'PCB Design', 'LVGL', 'RS485'],
+                    media: {
+                        images: ['./Transmitter.png', './Transmitter 1.png', './Transmitter 2.png', './LCD.jpg', './LCD_2.jpg', './Receiver 1.png', './Receiver 2.png'],
+                        videos: []
+                    }
+                },
+                {
+                    id: 'low-power-player',
+                    title: 'Ultra-Low Power RP2040 Music Player',
+                    overview: 'An ultra-low power music player using the RP2040, featuring a smart "ultra sleep mode" with instant wake-up and an intelligent LED-based battery management system.',
+                    challenge: 'To minimize idle power consumption drastically while ensuring an instantaneous wake-up, and to create an accurate Li-ion battery indicator.',
+                    solution: {
+                        hardware: ['RP2040 Microcontroller', 'Custom PCBA', 'Lithium-Ion Battery', 'LED Lights', 'Audio Components'],
+                    },
+                    software: [
+                        { title: 'Firmware (RP2040)', details: 'Implements deep sleep modes with event-driven wake-up, context preservation, and an ADC-based battery monitoring system with SoC estimation for accurate LED indication.' }
+                    ],
+                    features: ['Ultra-Low Power Consumption', 'Instant Wake-up', 'Intelligent Battery Status Indication', 'Optimized for RP2040', 'Custom PCBA', 'Portable Music Playback'],
+                    techHighlights: ['Microcontroller: RP2040', 'Battery Type: Lithium-Ion', 'Power Management: Deep Sleep, Event-driven Wake-up', 'Battery Monitoring: ADC, SoC Estimation', 'Hardware Design: Custom PCBA'],
+                    impact: 'Successfully delivered a music player excelling in battery longevity and responsiveness, demonstrating strong expertise in power management and hardware-software co-design.',
+                    tags: ['RP2040', 'Firmware', 'Low Power', 'PCB Design', 'Battery'],
+                    media: {
+                        images: ['./ULtrtalow.png'],
+                        videos: ['./ULtrtalow.mp4']
+                    }
+                },
+                {
+                    id: 'tesla-key',
+                    title: 'Modified Tesla Car Key with BLE Control',
+                    overview: 'A modified Tesla car key, based on an ESP32, that enables car control via a secure, encrypted BLE mobile application, all housed within a custom-designed PCB fit into a strict enclosure.',
+                    challenge: 'To engineer a complete system within strict physical constraints, while implementing robust power-saving deep sleep, secure encrypted communication, and a 5-button touch interface.',
+                    solution: {
+                        hardware: ['ESP32 Microcontroller', 'Custom PCB', 'Lithium-Ion Battery', 'USB Port', '5 Touch Buttons'],
+                        software: [
+                            { title: 'Firmware (ESP32)', details: 'Features deep sleep functionality with touch/BLE wake-up, a secure BLE peripheral service with AES encryption, and reliable touch button handling.' },
+                            { title: 'Mobile Application (Implicit)', details: 'Connects to the key via BLE, provides a control UI, and implements client-side encryption.' }
+                        ]
+                    },
+                    features: ['Custom PCB for Tight Enclosure', 'ESP32-Based Control', 'BLE Mobile App Control', 'Deep Sleep Power Management', 'Integrated Touch Buttons', 'Encrypted Secure Communication'],
+                    techHighlights: ['Microcontroller: ESP32', 'Communication: BLE', 'Power Management: Deep Sleep', 'Security: AES Encryption', 'Input: Capacitive Touch', 'Hardware Design: Custom PCB'],
+                    impact: 'Successfully delivered a highly integrated and secure car key, demonstrating expertise in complex embedded design under strict constraints, power management, and security.',
+                    tags: ['ESP32', 'Firmware', 'BLE', 'IoT', 'PCB Design', 'Security', 'Low Power'],
+                    media: {
+                        images: ['./Tesla_1 (1).png', './Tesla_1 (2).png', './Tesla_1 (3).png'],
+                        videos: []
+                    }
+                }
+            ];
+
+            // --- Team Data ---
+            const teamMembers = [
+                {
+                    name: 'Badar E Alam',
+                    role: 'Smart Systems Lead', // Updated role
+                    imageSrc: './badar_e_alam.png',
+                    fallbackText: 'Badar',
+                    skills: ['PCB Design', 'C++/C', 'Python', 'AI/ML', '3D Design']
+                },
+                {
+                    name: 'Nodan Gichki',
+                    role: 'Embedded Systems Lead', // Updated role
+                    imageSrc: './nodan.png',
+                    fallbackText: 'Nodan',
+                    skills: ['Firmware', 'PCB', 'UI/UX', 'C/C++']
+                },
+                // Add new team members here!
+                // {
+                //     name: 'New Member Name',
+                //     role: 'New Member Role',
+                //     imageSrc: './new_member.png',
+                //     fallbackText: 'New Member',
+                //     skills: ['Skill 1', 'Skill 2', 'Skill 3']
+                // }
+            ];
+
+            // --- DOM Elements ---
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const mainContent = document.getElementById('main-content');
+            const projectsGrid = document.getElementById('projects-grid');
+            const filtersNav = document.getElementById('filters');
+            const teamGrid = document.getElementById('team-grid');
+            const modal = document.getElementById('project-modal');
+            const modalContentContainer = document.getElementById('modal-content-container');
+
+            let activeFilter = 'All';
+
+            // --- Core Functions ---
+
+            // Function to generate and display project cards
+            const renderProjects = (filter = 'All') => {
+                const filteredProjects = filter === 'All' ? projects : projects.filter(p => p.tags.includes(filter));
+                projectsGrid.innerHTML = filteredProjects.map(project => `
+                    <div class="project-card rounded-lg shadow-md overflow-hidden cursor-pointer bg-[#112240] border border-[#233554] transition-all duration-200 hover:transform hover:-translate-y-1 hover:shadow-cyan-400/30" data-project-id="${project.id}">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-slate-100 mb-2">${project.title}</h3>
+                            <p class="text-slate-400 mb-4 text-sm">${project.overview}</p>
+                            <div class="flex flex-wrap">
+                                ${project.tags.map(tag => `
+                                    <span class="inline-block bg-slate-700 text-slate-300 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full">
+                                        ${tag}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            // Function to generate and display team member cards
+            const renderTeam = () => {
+                teamGrid.innerHTML = teamMembers.map(member => `
+                    <!-- Added a fixed width to the card -->
+                    <div class="team-card w-80 bg-[#112240] border border-[#233554] p-8 text-center rounded-lg shadow-md transition-all duration-200 hover:transform hover:-translate-y-1">
+                        <img src="${member.imageSrc}" onerror="this.onerror=null;this.src='https://placehold.co/120x120/112240/64ffda?text=${member.fallbackText}';" alt="${member.name}'s picture" class="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto mb-4 border-2 border-[#64ffda] object-cover" />
+                        <h3 class="text-xl font-bold text-slate-100 mb-1">${member.name}</h3>
+                        <p class="text-[#64ffda] font-medium mb-4">${member.role}</p>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            ${member.skills.map(skill => `
+                                <span class="inline-block bg-slate-700 text-slate-300 text-xs font-medium px-2.5 py-0.5 rounded-full">${skill}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            // Function to create filter buttons dynamically
+            const createFilters = () => {
+                const allTags = new Set(projects.flatMap(p => p.tags));
+                const sortedTags = ['All', ...Array.from(allTags).sort()];
+
+                filtersNav.innerHTML = sortedTags.map(tag => `
+                    <button class="tag text-sm font-medium px-4 py-2 rounded-full shadow-sm bg-[#233554] text-slate-300 transition-colors duration-200 hover:bg-opacity-70 ${tag === activeFilter ? 'active bg-[#64ffda] text-[#0a192f]' : ''}" data-filter="${tag}">
+                        ${tag}
+                    </button>
+                `).join('');
+            };
+
+            // Function to open the project modal
+            const openModal = (projectId) => {
+                const project = projects.find(p => p.id === projectId);
+                if (project) {
+                    const aiSummaryPlaceholder = 'Click "Generate AI Summary ✨" to get a concise overview of this project.';
+                    modalContentContainer.innerHTML = `
+                        <div class="sticky top-0 bg-[#112240] p-6 border-b border-slate-700 flex justify-between items-center z-10">
+                            <h2 id="modal-title" class="text-2xl font-bold text-slate-100">${project.title}</h2>
+                            <button id="modal-close-btn" class="text-slate-400 hover:text-[#64ffda] transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        <div id="modal-body" class="p-8">
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Project Overview</h3>
+                                <p class="text-slate-400">${project.overview}</p>
+                            </section>
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">The Challenge</h3>
+                                <p class="text-slate-400">${project.challenge}</p>
+                            </section>
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Solution and Implementation</h3>
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h4 class="font-semibold text-slate-200 mb-2">Hardware Components</h4>
+                                        <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                            ${project.solution && project.solution.hardware ? project.solution.hardware.map(item => `<li>${item}</li>`).join('') : '<li>N/A</li>'}
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-200 mb-2">Software Architecture</h4>
+                                        <div class="space-y-3">
+                                            ${project.solution && project.solution.software ? project.solution.software.map(item => `
+                                                <div>
+                                                    <p class="font-medium text-slate-300">${item.title}</p>
+                                                    <p class="text-sm text-slate-400">${item.details}</p>
+                                                </div>
+                                            `).join('') : '<p class="text-slate-400">N/A</p>'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Key Features</h3>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                                    ${project.features.map(f => `<li>${f}</li>`).join('')}
+                                </ul>
+                            </section>
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Technical Highlights</h3>
+                                <div class="flex flex-wrap">
+                                    ${project.techHighlights.map(th => `
+                                        <span class="inline-block bg-[#233554] text-[#64ffda] text-sm font-medium mr-2 mb-2 px-3 py-1 rounded-full">
+                                            ${th}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </section>
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Outcome and Impact</h3>
+                                <p class="text-slate-400">${project.impact}</p>
+                            </section>
+                            ${project.media.images && project.media.images.length > 0 ? `
+                                <section class="mb-6">
+                                    <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Project Images</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        ${project.media.images.map(imgSrc => `
+                                            <img src="${imgSrc}" alt="${project.title} Image" class="rounded-lg shadow-md w-full h-auto object-cover" />
+                                        `).join('')}
+                                    </div>
+                                </section>
+                            ` : ''}
+                            ${project.media.videos && project.media.videos.length > 0 ? `
+                                <section class="mb-6">
+                                    <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 text-slate-200">Project Videos</h3>
+                                    <div class="grid grid-cols-1 gap-4">
+                                        ${project.media.videos.map(videoSrc => `
+                                            <div class="w-full aspect-video rounded-lg overflow-hidden shadow-md">
+                                                <video controls class="w-full h-full">
+                                                    <source src="${videoSrc}" type="video/mp4" />
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </section>
+                            ` : ''}
+                            <section class="mb-6">
+                                <h3 class="text-lg font-semibold border-b border-slate-700 pb-2 mb-3 flex items-center text-slate-200">
+                                    AI Summary
+                                    <button id="generate-ai-summary" class="ml-3 px-3 py-1 bg-[#64ffda] text-[#0a192f] text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors">
+                                        Generate AI Summary ✨
+                                    </button>
+                                </h3>
+                                <div class="mt-4 p-4 bg-[#0a192f] rounded-lg border border-slate-700">
+                                    <p id="ai-summary-text" class="text-slate-400 italic">${aiSummaryPlaceholder}</p>
+                                </div>
+                            </section>
+                        </div>
+                    `;
+
+                    // Add event listeners for the new content inside the modal
+                    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+                    document.getElementById('generate-ai-summary').addEventListener('click', () => generateAISummary(project));
+                    modal.classList.remove('hidden');
+                }
+            };
+
+            // Function to close the project modal
+            const closeModal = () => {
+                modal.classList.add('hidden');
+            };
+
+            // Function to generate AI summary using the Gemini API
+            const generateAISummary = async (project) => {
+                const summaryTextElement = document.getElementById('ai-summary-text');
+                const generateButton = document.getElementById('generate-ai-summary');
+
+                summaryTextElement.textContent = 'Generating summary...';
+                generateButton.disabled = true;
+                generateButton.textContent = 'Generating...';
+
+                const prompt = `Provide a concise, professional, and impactful summary of the following embedded systems/IoT project, suitable for a portfolio. Focus on the problem, solution, and key achievements.
+
+                Project Title: ${project.title}
+                Overview: ${project.overview}
+                Challenge: ${project.challenge}
+                Solution:
+                  Hardware: ${project.solution && project.solution.hardware ? project.solution.hardware.join(', ') : 'N/A'}
+                  Software: ${project.solution && project.solution.software ? project.solution.software.map(s => `${s.title}: ${s.details}`).join('; ') : 'N/A'}
+                Features: ${project.features.join(', ')}
+                Technical Highlights: ${project.techHighlights.join(', ')}
+                Impact: ${project.impact}
+
+                Please provide a summary of approximately 100-150 words.`;
+
+                const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status} ${response.statusText}`);
+                    }
+                    const result = await response.json();
+                    const text = result.candidates[0].content.parts[0].text;
+                    summaryTextElement.textContent = text;
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    summaryTextElement.textContent = `Error generating summary. Please check the console for details.`;
+                } finally {
+                    generateButton.disabled = false;
+                    generateButton.textContent = 'Generate AI Summary ✨';
+                }
+            };
+
+            // --- Event Listeners ---
+
+            // Welcome Screen Animation
+            setTimeout(() => {
+                welcomeScreen.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeScreen.style.display = 'none';
+                    mainContent.style.opacity = '1';
+                }, 500);
+            }, 2000);
+
+            // Filter button clicks
+            filtersNav.addEventListener('click', e => {
+                const button = e.target.closest('button.tag');
+                if (button) {
+                    // Remove 'active' from all buttons
+                    filtersNav.querySelectorAll('button.tag').forEach(btn => {
+                        btn.classList.remove('active', 'bg-[#64ffda]', 'text-[#0a192f]');
+                    });
+
+                    // Add 'active' to the clicked button
+                    button.classList.add('active', 'bg-[#64ffda]', 'text-[#0a192f]');
+                    activeFilter = button.dataset.filter;
+                    renderProjects(activeFilter);
+                }
+            });
+
+            // Project card clicks to open modal
+            projectsGrid.addEventListener('click', e => {
+                const card = e.target.closest('.project-card');
+                if (card) {
+                    openModal(card.dataset.projectId);
+                }
+            });
+
+            // Modal click to close modal
+            modal.addEventListener('click', e => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Escape key to close modal
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+
+            // Initial rendering
+            createFilters();
+            renderProjects();
+            renderTeam(); // Call the new function to render team members
+        });
+    </script>
+</body>
+</html>
